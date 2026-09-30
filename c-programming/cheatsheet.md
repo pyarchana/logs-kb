@@ -1,6 +1,8 @@
 # C Programming - Cheatsheet
 
-Quick revision before a mock test. Full explanations in [notes.md](notes.md).
+Quick revision before a mock test. Full explanations in [notes.md](notes.md). Practice questions in [practice.md](practice.md).
+
+**Sections:** [Tokens](#tokens) · [Data Types](#data-types) · [Operators](#operators) · [Branching](#branching) · [Loops](#loops)
 
 ---
 
