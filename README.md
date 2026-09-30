@@ -8,6 +8,7 @@ Notes on everything I study, build, debug and figure out (written for my future 
 | Folder | What's in it |
 |---|---|
 | `git-and-github/` | Git internals, branching, open source workflow, GitHub Actions |
+| `c-programming/` | C basics: tokens, data types, operators, branching, loops |
 | `dsa/` | Data structures, algorithms, problem patterns |
 | `system-design/` | Architecture, scalability, design patterns |
 | `backend/` | FastAPI, databases, APIs |
