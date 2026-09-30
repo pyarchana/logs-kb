@@ -4,6 +4,16 @@ Notes on C, written around tracing code by hand and predicting what it prints.
 
 Topics covered so far: basics, tokens, data types, operators, branching, loops.
 
+## Contents
+
+1. [Basics of a C Program](#part-1-basics-of-a-c-program)
+2. [C Tokens](#part-2-c-tokens)
+3. [Data Types](#part-3-data-types)
+4. [Operators](#part-4-operators)
+5. [Branching Statements](#part-5-branching-statements)
+6. [Loops](#part-6-loops)
+7. [Mistakes I Made](#mistakes-i-made)
+
 ---
 
 ## Part 1: Basics of a C Program
