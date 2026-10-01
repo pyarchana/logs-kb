@@ -2,7 +2,7 @@
 
 Quick revision before a mock test. Full explanations in [notes.md](notes.md). Practice questions in [practice.md](practice.md).
 
-**Sections:** [Tokens](#tokens) · [Data Types](#data-types) · [Operators](#operators) · [Branching](#branching) · [Loops](#loops)
+**Sections:** [Tokens](#tokens) · [Data Types](#data-types) · [Operators](#operators) · [Branching](#branching) · [Loops](#loops) · [Arrays](#arrays-1d)
 
 ---
 
@@ -113,3 +113,28 @@ Identifier: letters, digits, `_`. Can't start with a digit. Can't be a keyword. 
 - `continue` in `while` can skip the increment → infinite loop
 - `for (;;)` and `while (1)` → infinite
 - do-while needs `;` after `while (...)`
+
+---
+
+## Arrays (1D)
+
+| Declaration | Contents |
+|---|---|
+| `int a[5] = {1, 2, 3};` | 1 2 3 0 0 |
+| `int a[5] = {0};` | all 0 |
+| `int a[] = {1, 2, 3};` | size 3 |
+| `int a[5] = {[2] = 7};` | 0 0 7 0 0 |
+| `int a[2] = {1, 2, 3};` | invalid |
+| `int a[5];` (local) | garbage |
+| `int a[5];` (global/static) | all 0 |
+
+- Index runs 0 to n - 1
+- `address of a[i] = base + i × sizeof(type)`
+- `sizeof(a)` = total bytes; `sizeof(a) / sizeof(a[0])` = number of elements
+- No bounds checking: `a[n]` compiles but is undefined behavior
+- `a` = address of `a[0]`
+- `a[i]` = `*(a + i)` = `*(i + a)` = `i[a]`
+- `b = a;` and `a++;` → error
+- `a == b` compares addresses, not contents
+- Find max: start with `a[0]`, not 0
+- Reverse: loop to `n / 2`, not `n`

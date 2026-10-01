@@ -193,3 +193,104 @@ while (i < 5) {
 
 When `i` is 2, `continue` skips `i++`, so `i` stays 2 forever.
 </details>
+---
+
+## Q11: Partial initialization
+
+```c
+int a[5] = {1, 2};
+printf("%d %d", a[1], a[4]);
+```
+
+<details>
+<summary>Answer</summary>
+
+**2 0**
+
+Once some values are given, the rest are filled with 0.
+</details>
+
+---
+
+## Q12: Number of elements
+
+```c
+int a[] = {10, 20, 30, 40};
+printf("%zu %zu", sizeof(a), sizeof(a) / sizeof(a[0]));
+```
+
+<details>
+<summary>Answer</summary>
+
+**16 4** (with 4-byte int)
+
+`sizeof(a)` is the total size in bytes. Dividing by one element's size gives the count.
+</details>
+
+---
+
+## Q13: Swapped index
+
+```c
+int a[] = {1, 2, 3, 4, 5};
+printf("%d", 2[a]);
+```
+
+<details>
+<summary>Answer</summary>
+
+**3**
+
+`2[a]` is `*(2 + a)`, which is the same as `*(a + 2)`, which is `a[2]`.
+</details>
+
+---
+
+## Q14: Designated initializers
+
+```c
+int a[5] = {[1] = 5, [3] = 9};
+for (int i = 0; i < 5; i++)
+    printf("%d ", a[i]);
+```
+
+<details>
+<summary>Answer</summary>
+
+**0 5 0 9 0**
+
+Only positions 1 and 3 are set. Everything else becomes 0.
+</details>
+
+---
+
+## Q15: Address calculation
+
+`int a[10]` starts at address 2000, and `int` takes 4 bytes. What is the address of `a[6]`?
+
+<details>
+<summary>Answer</summary>
+
+**2024**
+
+2000 + 6 × 4 = 2024.
+</details>
+
+---
+
+## Q16: Ternary inside a loop
+
+```c
+int a[] = {1, 2, 3, 4, 5}, s = 0;
+for (int i = 0; i < 5; i++)
+    s += a[i] % 2 ? a[i] : 0;
+printf("%d", s);
+```
+
+<details>
+<summary>Answer</summary>
+
+**9**
+
+`?:` has higher precedence than `+=`, so this is `s += (a[i] % 2 ? a[i] : 0)`. Only the odd values are added: 1 + 3 + 5 = 9.
+</details>

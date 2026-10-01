@@ -2,7 +2,7 @@
 
 Notes on C, written around tracing code by hand and predicting what it prints.
 
-Topics covered so far: basics, tokens, data types, operators, branching, loops.
+Topics covered so far: basics, tokens, data types, operators, branching, loops, 1D arrays.
 
 ## Contents
 
@@ -12,7 +12,8 @@ Topics covered so far: basics, tokens, data types, operators, branching, loops.
 4. [Operators](#part-4-operators)
 5. [Branching Statements](#part-5-branching-statements)
 6. [Loops](#part-6-loops)
-7. [Mistakes I Made](#mistakes-i-made)
+7. [Arrays](#part-7-arrays)
+8. [Mistakes I Made](#mistakes-i-made)
 
 ---
 
@@ -562,6 +563,182 @@ for (int i = 0; i < 10; i++) {
     i += 2;
 }
 // 0 3 6 9   (i goes up by 3 each round: +2 in body, +1 in update)
+```
+
+---
+
+## Part 7: Arrays
+
+An array is a group of elements of the **same type**, stored **next to each other** in memory, accessed by an index.
+
+### Declaring an array
+
+```c
+int a[5];        // 5 ints: a[0] to a[4]
+char name[20];   // 20 chars
+float marks[3];
+```
+
+- The size must be a positive integer. `int a[0];` and `int a[-3];` are invalid.
+- Indexing starts at **0**, so the last element is `a[n - 1]`.
+- Since C99, a local array's size can be a variable (`int n = 5; int a[n];`). This is called a VLA, and it **cannot** be initialized with `{ }`.
+
+### Initializing
+
+```c
+int a[5] = {1, 2, 3, 4, 5};   // all 5 given
+int b[5] = {1, 2, 3};         // 1 2 3 0 0  (rest become 0)
+int c[5] = {0};               // 0 0 0 0 0  (common way to zero an array)
+int d[]  = {1, 2, 3};         // size is taken from the list → 3
+int e[5] = {[2] = 7};         // 0 0 7 0 0  (C99 designated initializer)
+int f[2] = {1, 2, 3};         // invalid: more values than size
+```
+
+Rule: if **at least one** value is given, every element not given becomes 0.
+
+**No initializer at all:**
+- Local array (inside a function) → contains **garbage** values
+- Global or `static` array → all **0**
+
+```c
+int g[3];              // global → 0 0 0
+
+int main() {
+    int h[3];          // local → garbage
+}
+```
+
+### Memory layout
+
+Elements sit one after another with no gaps. If the array starts at address `base`:
+
+```
+address of a[i] = base + i × sizeof(element)
+```
+
+Example: `int a[10]` starts at 1000, `int` is 4 bytes.
+
+| Element | Address |
+|---|---|
+| `a[0]` | 1000 |
+| `a[1]` | 1004 |
+| `a[3]` | 1000 + 3 × 4 = 1012 |
+| `a[9]` | 1036 |
+
+### sizeof and number of elements
+
+```c
+int a[] = {10, 20, 30, 40};
+printf("%zu", sizeof(a));                  // 16  (4 elements × 4 bytes)
+printf("%zu", sizeof(a) / sizeof(a[0]));   // 4   (number of elements)
+```
+
+`sizeof(a) / sizeof(a[0])` is the standard way to get the length. It only works where the array itself is visible, not on an array passed into a function (covered with functions).
+
+### No bounds checking
+
+C does **not** check whether an index is inside the array.
+
+```c
+int a[5];
+a[5] = 10;    // compiles, but writes outside the array
+printf("%d", a[7]);   // compiles, reads outside the array
+```
+
+This is **undefined behavior**: it may print garbage, crash, or silently overwrite another variable. The compiler won't stop you.
+
+The classic cause is an off-by-one loop:
+
+```c
+for (i = 0; i <= 5; i++)   // wrong: i = 5 is out of bounds
+    a[i] = 0;
+
+for (i = 0; i < 5; i++)    // correct
+    a[i] = 0;
+```
+
+### Array name and indexing
+
+The array name, used in an expression, gives the **address of the first element**.
+
+```c
+int a[] = {1, 2, 3, 4, 5};
+// a  is the same address as  &a[0]
+```
+
+`a[i]` is just shorthand for `*(a + i)`: start at the first element and move `i` elements forward. Since addition can be swapped, all four of these are the same:
+
+```c
+a[2]      // 3
+*(a + 2)  // 3
+*(2 + a)  // 3
+2[a]      // 3   (looks wrong, but valid C)
+```
+
+`*` and addresses are covered properly with pointers. For now, remember that `i[a]` works and means `a[i]`.
+
+### What you cannot do with arrays
+
+```c
+int a[3] = {1, 2, 3}, b[3];
+
+b = a;        // error: arrays can't be assigned
+a++;          // error: the array name can't be changed
+if (a == b)   // compiles, but compares addresses, not contents → always false here
+```
+
+To copy or compare, use a loop element by element:
+
+```c
+for (i = 0; i < 3; i++)
+    b[i] = a[i];
+```
+
+### Common operations
+
+**Sum of elements**
+
+```c
+int sum = 0;
+for (i = 0; i < n; i++)
+    sum += a[i];
+```
+
+**Largest element**
+
+```c
+int max = a[0];            // start with the first element, not 0
+for (i = 1; i < n; i++)
+    if (a[i] > max)
+        max = a[i];
+```
+
+Starting `max` at 0 breaks when all elements are negative.
+
+**Reverse in place**
+
+```c
+for (i = 0; i < n / 2; i++) {
+    int t = a[i];
+    a[i] = a[n - 1 - i];
+    a[n - 1 - i] = t;
+}
+// {1, 2, 3, 4, 5} → {5, 4, 3, 2, 1}
+```
+
+Going up to `n / 2` matters. Looping all the way to `n` swaps everything twice and gives back the original array.
+
+**Linear search**
+
+```c
+int pos = -1;
+for (i = 0; i < n; i++) {
+    if (a[i] == key) {
+        pos = i;
+        break;
+    }
+}
+// pos is the index of key, or -1 if not found
 ```
 
 ---
